@@ -6,10 +6,10 @@ import axios from 'axios';
 
 
 async function fetchResource(url: string) {
-  const cacheUrl = localStorage.getItem(url);
-  if (cacheUrl != null) {
+  let objectUrl = localStorage.getItem(url);
+  if (objectUrl != null) {
     try {
-      const res = await axios.get(cacheUrl);
+      const res = await axios.get(objectUrl);
       return res.data;
     } catch (err) {
       console.error(err);
@@ -17,7 +17,7 @@ async function fetchResource(url: string) {
   }
   const res = await axios.get(url);
   const blob = new Blob([res.data], { type: res.headers['content-type'] });
-  const objectUrl = URL.createObjectURL(blob);
+  objectUrl = URL.createObjectURL(blob);
   localStorage.setItem(url, objectUrl);
   return res.data;
 }
