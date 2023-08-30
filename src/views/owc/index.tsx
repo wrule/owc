@@ -4,22 +4,21 @@ import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
 
-
-async function fetchResource(url: string) {
-  let objectUrl = localStorage.getItem(url);
-  if (objectUrl != null) {
+async function fetchObjectURL(url: string) {
+  let objectURL = localStorage.getItem(url);
+  if (objectURL != null) {
     try {
-      const res = await axios.get(objectUrl);
-      return res.data;
-    } catch (err) {
-      console.error(err);
-    }
+      await fetch(objectURL);
+      return objectURL;
+    } catch (err) { console.error(err); }
   }
-  const res = await axios.get(url);
-  const blob = new Blob([res.data], { type: res.headers['content-type'] });
-  objectUrl = URL.createObjectURL(blob);
-  localStorage.setItem(url, objectUrl);
-  return res.data;
+  const res = await fetch(url);
+  const blob = new Blob([await res.text()], {
+    type: res.headers.get('content-type') ?? 'text/plain',
+  });
+  objectURL = URL.createObjectURL(blob);
+  localStorage.setItem(url, objectURL);
+  return objectURL;
 }
 
 function Ready() {
@@ -28,7 +27,7 @@ function Ready() {
 
   const load = async () => {
     console.log(1);
-    const rsp = await fetchResource('/data.json');
+    const rsp = await fetchObjectURL('/data.json');
     console.log(2);
   };
 
