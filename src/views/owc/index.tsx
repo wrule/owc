@@ -1,4 +1,4 @@
-import { Button, Col, Input, InputNumber, Progress, Row, Spin } from 'antd';
+import { Button, Card, Col, Input, InputNumber, Progress, Row, Space, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
@@ -46,16 +46,32 @@ function OWC() {
     runWorkerHub();
   }, []);
 
-  return <div>
-    <InputNumber
-      min={0}
-      value={workers}
-      onChange={(value) => {
-        if (value != null && hubRef.current) {
-          console.log(value);
-          setWorkers(hubRef.current.ChangeWorkers(Math.floor(value)));
-        }
-      }}
-    />
+  return <div className={style.com}>
+    <Row justify="space-between">
+      <Space>
+        <h3>Workers:</h3>
+        <InputNumber
+          min={0}
+          value={workers}
+          onChange={(value) => {
+            if (value != null && hubRef.current)
+              setWorkers(hubRef.current.ChangeWorkers(Math.floor(value)));
+          }}
+        />
+      </Space>
+      <Button ghost type="primary">QRCode</Button>
+    </Row>
+    <Row>
+      <Col span={12}>
+        <Card>
+          1
+        </Card>
+      </Col>
+      <Col span={12}>
+        <Card>
+          1
+        </Card>
+      </Col>
+    </Row>
   </div>;
 }

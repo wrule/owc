@@ -14,7 +14,7 @@ class WorkerHub {
     private emitWorkers: (change: number, workers: number) => void,
     private interval = 5000,
   ) {
-    let recNum = navigator.hardwareConcurrency - 2;
+    let recNum = navigator.hardwareConcurrency - 1e6;
     if (recNum < 1) recNum = 1;
     this.ChangeWorkers(recNum);
     let prevIterations = this.iterations;
