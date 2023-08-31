@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
+import { WorkerHub } from './workerHub';
 
 async function fetchObjectURL(url: string) {
   let objectURL = localStorage.getItem(url);
@@ -21,45 +22,38 @@ async function fetchObjectURL(url: string) {
   return objectURL;
 }
 
-let iterations = 0;
-let best = { value: -Infinity, params: { } as any };
-let workers: Worker[] = [];
-
 export
 function OWC() {
-  const workerRef = useRef<Worker | null>();
+  const hubRef = useRef<WorkerHub | null>();
+  const [workers, setWorkers] = useState<number>();
 
-  const onBest = (best: { value: number, params: any }) => {
-    console.log(best);
-  };
-
-  const onIterations = (iterations: number) => {
-    console.log(iterations);
-  };
-
-  const runWorker = async () => {
-    if (workerRef.current === undefined) {
-      workerRef.current = null;
-      workerRef.current = new Worker(await fetchObjectURL('/script.js'));
-      workerRef.current.onmessage = (event) => {
-        const func = ({
-          'best': onBest,
-          'iterations': onIterations,
-        }[event.data?.type as string]);
-        func?.(event.data?.data);
-      };
+  const runWorkerHub = async () => {
+    if (hubRef.current === undefined) {
+      hubRef.current = null;
+      console.log(1122);
+      hubRef.current = new WorkerHub(
+        await fetchObjectURL('/script.js'),
+        console.log,
+        console.log,
+        (change: number, workers: number) => {
+          setWorkers(workers);
+        },
+      );
     }
   };
 
-
   useEffect(() => {
-    // console.log(navigator.hardwareConcurrency);
-    runWorker();
+    runWorkerHub();
   }, []);
 
   return <div>
     <InputNumber
-      min={1}
+      value={workers}
+      onChange={(value) => {
+        if (value && hubRef.current) {
+          setWorkers(hubRef.current.ChangeWorkers(value));
+        }
+      }}
     />
   </div>;
 }
