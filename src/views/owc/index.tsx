@@ -1,5 +1,5 @@
-import { Button, Col, Progress, Row, Spin } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Col, Input, InputNumber, Progress, Row, Spin } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
@@ -21,36 +21,45 @@ async function fetchObjectURL(url: string) {
   return objectURL;
 }
 
-function Ready() {
-  const [scriptProgress, setScriptProgress] = useState<number>(0);
-  const [dataProgress, setDataProgress] = useState<number>(0);
-
-  const load = async () => {
-    console.log(1);
-    const rsp = await fetchObjectURL('/data.json');
-    console.log(2);
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  return <div className={style.com}>
-    <Button onClick={() => {
-      window.open(window.location.href);
-    }}>Fork</Button>
-    <Row>
-      <span>{`Script loading${scriptProgress === 100 ? ' complete' : '...'}`}</span>
-      <Progress percent={scriptProgress} />
-    </Row>
-    <Row>
-      <span>{`Data loading${dataProgress === 100 ? ' complete' : '...'}`}</span>
-      <Progress percent={dataProgress} />
-    </Row>
-  </div>;
-}
+let iterations = 0;
+let best = { value: -Infinity, params: { } as any };
+let workers: Worker[] = [];
 
 export
 function OWC() {
-  return <Ready />;
+  const workerRef = useRef<Worker | null>();
+
+  const onBest = (best: { value: number, params: any }) => {
+    console.log(best);
+  };
+
+  const onIterations = (iterations: number) => {
+    console.log(iterations);
+  };
+
+  const runWorker = async () => {
+    if (workerRef.current === undefined) {
+      workerRef.current = null;
+      workerRef.current = new Worker(await fetchObjectURL('/script.js'));
+      workerRef.current.onmessage = (event) => {
+        const func = ({
+          'best': onBest,
+          'iterations': onIterations,
+        }[event.data?.type as string]);
+        func?.(event.data?.data);
+      };
+    }
+  };
+
+
+  useEffect(() => {
+    // console.log(navigator.hardwareConcurrency);
+    runWorker();
+  }, []);
+
+  return <div>
+    <InputNumber
+      min={1}
+    />
+  </div>;
 }
