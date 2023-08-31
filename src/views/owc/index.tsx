@@ -1,4 +1,4 @@
-import { Button, Card, Col, Input, InputNumber, Progress, QRCode, Row, Space, Spin, Statistic } from 'antd';
+import { Button, Card, Col, Input, InputNumber, Progress, QRCode, Row, Space, Spin, Statistic, Table } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
@@ -107,6 +107,20 @@ function OWC() {
             value={1234567891011}
           />
         </Card>
+      </Col>
+    </Row>
+    <Row>
+      <Col span={24}>
+        <Table
+          showHeader={false}
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col span={24}>
+        <Table
+          showHeader={false}
+        />
       </Col>
     </Row>
   </div>;

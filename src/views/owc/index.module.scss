@@ -11,6 +11,9 @@
     }
   }
   .progress {
-    width: 20%;
+    width: 100%;
+    @media screen and (min-width: 769px) {
+      width: 20%;
+    }
   }
 }
