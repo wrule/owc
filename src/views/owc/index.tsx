@@ -49,9 +49,10 @@ function OWC() {
 
   return <div>
     <InputNumber
+      min={0}
       value={workers}
       onChange={(value) => {
-        if (value && hubRef.current) {
+        if (value != null && hubRef.current) {
           setWorkers(hubRef.current.ChangeWorkers(value));
         }
       }}
