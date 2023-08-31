@@ -30,7 +30,6 @@ function OWC() {
   const runWorkerHub = async () => {
     if (hubRef.current === undefined) {
       hubRef.current = null;
-      console.log(1122);
       hubRef.current = new WorkerHub(
         await fetchObjectURL('/script.js'),
         console.log,
@@ -53,7 +52,8 @@ function OWC() {
       value={workers}
       onChange={(value) => {
         if (value != null && hubRef.current) {
-          setWorkers(hubRef.current.ChangeWorkers(value));
+          console.log(value);
+          setWorkers(hubRef.current.ChangeWorkers(Math.floor(value)));
         }
       }}
     />
