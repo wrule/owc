@@ -1,7 +1,16 @@
 .com {
   :global {
     .ant-row {
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
+    .ant-card-body {
+      padding: 0.5rem 0.7rem;
+    }
+    .ant-statistic-content-value {
+      font-size: 1rem;
+    }
+  }
+  .progress {
+    width: 20%;
   }
 }

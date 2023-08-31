@@ -1,4 +1,4 @@
-import { Button, Card, Col, Input, InputNumber, Progress, Row, Space, Spin } from 'antd';
+import { Button, Card, Col, Input, InputNumber, Progress, QRCode, Row, Space, Spin, Statistic } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
@@ -25,7 +25,8 @@ async function fetchObjectURL(url: string) {
 export
 function OWC() {
   const hubRef = useRef<WorkerHub | null>();
-  const [workers, setWorkers] = useState<number>();
+  const [workers, setWorkers] = useState<number>(0);
+  const [qrcode, setQRCode] = useState<boolean>(false);
 
   const runWorkerHub = async () => {
     if (hubRef.current === undefined) {
@@ -47,10 +48,14 @@ function OWC() {
   }, []);
 
   return <div className={style.com}>
+    {workers > 0 && <Row justify="center">
+      <img className={style.progress} src={progress} />
+    </Row>}
     <Row justify="space-between">
       <Space>
-        <h3>Workers:</h3>
+        <h3>Worker:</h3>
         <InputNumber
+          style={{ width: '4rem' }}
           min={0}
           value={workers}
           onChange={(value) => {
@@ -59,17 +64,48 @@ function OWC() {
           }}
         />
       </Space>
-      <Button ghost type="primary">QRCode</Button>
+      <Button
+        type="primary"
+        onClick={() => setQRCode(!qrcode)}>
+        {qrcode ? 'Collapse' : 'QRCode'}
+      </Button>
     </Row>
-    <Row>
+    {qrcode && <Row justify="center">
+      <QRCode value={window.location.href} />
+    </Row>}
+    <Row gutter={16}>
       <Col span={12}>
         <Card>
-          1
+          <Statistic
+            title="Best"
+            value={1234567891011}
+          />
         </Card>
       </Col>
       <Col span={12}>
         <Card>
-          1
+          <Statistic
+            title="Iterations"
+            value={1234567891011}
+          />
+        </Card>
+      </Col>
+    </Row>
+    <Row gutter={16}>
+      <Col span={12}>
+        <Card>
+          <Statistic
+            title="Optimizers"
+            value={1234567891011}
+          />
+        </Card>
+      </Col>
+      <Col span={12}>
+        <Card>
+          <Statistic
+            title="TimeCost"
+            value={1234567891011}
+          />
         </Card>
       </Col>
     </Row>
