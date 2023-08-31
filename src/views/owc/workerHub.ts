@@ -14,11 +14,14 @@ class WorkerHub {
     private emitWorkers: (change: number, workers: number) => void,
     private interval = 5000,
   ) {
+    let recNum = navigator.hardwareConcurrency - 2;
+    if (recNum < 1) recNum = 1;
+    this.ChangeWorkers(recNum);
     let prevIterations = this.iterations;
     setInterval(() => {
       this.emitIterations(this.iterations - prevIterations, this.iterations);
       prevIterations = this.iterations;
-    }, interval);
+    }, this.interval);
   }
 
   private workers: Worker[] = [];
