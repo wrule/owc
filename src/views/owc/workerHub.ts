@@ -22,7 +22,7 @@ class WorkerHub {
       const data: any = event.data?.data;
       if (type === 'iterations') this.iterations += data ?? 0;
       if (type === 'best' && data?.value > this.best.value) {
-        console.log(data);
+        this.best = data;
       }
     };
     return worker;
