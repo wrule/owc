@@ -1,5 +1,5 @@
 import { Button, Card, Col, Input, InputNumber, Progress, QRCode, Row, Space, Spin, Statistic, Table } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
@@ -29,6 +29,7 @@ function OWC() {
   const [qrcode, setQRCode] = useState<boolean>(false);
   const [best, setBest] = useState<number>(0);
   const [iterations, setIterations] = useState<number>(0);
+  const [startTime, setStartTime] = useState<number>(0);
 
   const runWorkerHub = async () => {
     if (hubRef.current === undefined) {
@@ -42,8 +43,23 @@ function OWC() {
           setWorkers(workers);
         },
       );
+      const a = Date.now();
+      setStartTime(a);
+      setInterval(() => {
+        setStartTime(a + Math.random());
+      }, 1000);
     }
   };
+
+  const timeCost = useMemo(() => {
+    let seconds = 0;
+    if (startTime) seconds = Math.floor((Date.now() - startTime) / 1000);
+    let result = '';
+    result = ':' + (Math.floor(seconds) % 60).toString().padStart(2, '0') + result;
+    result = ':' + (Math.floor(seconds / 60) % 60).toString().padStart(2, '0') + result;
+    result = (Math.floor(seconds / 3600) % 60).toString().padStart(2, '0') + result;
+    return result;
+  }, [startTime]);
 
   useEffect(() => {
     runWorkerHub();
@@ -99,7 +115,7 @@ function OWC() {
         <Card>
           <Statistic
             title="Optimizers"
-            value={1234567891011}
+            value={5}
           />
         </Card>
       </Col>
@@ -107,7 +123,7 @@ function OWC() {
         <Card>
           <Statistic
             title="TimeCost"
-            value={1234567891011}
+            value={timeCost}
           />
         </Card>
       </Col>
