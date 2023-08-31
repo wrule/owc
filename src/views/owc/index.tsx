@@ -27,14 +27,16 @@ function OWC() {
   const hubRef = useRef<WorkerHub | null>();
   const [workers, setWorkers] = useState<number>(0);
   const [qrcode, setQRCode] = useState<boolean>(false);
+  const [best, setBest] = useState<number>(0);
+  const [iterations, setIterations] = useState<number>(0);
 
   const runWorkerHub = async () => {
     if (hubRef.current === undefined) {
       hubRef.current = null;
       hubRef.current = new WorkerHub(
         await fetchObjectURL('/script.js'),
-        console.log,
-        console.log,
+        (best) => setBest(best.value),
+        (change, iterations) => setIterations(iterations),
         (change: number, workers: number) => {
           console.log(change, workers);
           setWorkers(workers);
@@ -78,7 +80,8 @@ function OWC() {
         <Card>
           <Statistic
             title="Best"
-            value={1234567891011}
+            value={best}
+            valueStyle={{ fontWeight: 'bolder' }}
           />
         </Card>
       </Col>
@@ -86,7 +89,7 @@ function OWC() {
         <Card>
           <Statistic
             title="Iterations"
-            value={1234567891011}
+            value={iterations}
           />
         </Card>
       </Col>
