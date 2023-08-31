@@ -10,12 +10,12 @@ class WorkerHub {
   public constructor(
     private scriptURL: string,
     private emitBest: (best: Best) => void,
-    private emitIterations: (iterations: number) => void,
-    private emitWorkers: (workers: number) => void,
+    private emitIterations: (change: number, iterations: number) => void,
+    private emitWorkers: (change: number, workers: number) => void,
     private interval = 5000,
   ) {
     setInterval(() => {
-      this.emitIterations(this.iterations);
+      this.emitIterations(this.iterations, this);
       this.iterations = 0;
     }, interval);
   }
@@ -47,7 +47,7 @@ class WorkerHub {
       while (abs-- > 0 && this.workers.length > 1)
         this.workers.pop()?.terminate();
     }
-    if (diff !== 0) this.emitWorkers(diff);
+    this.emitWorkers(diff, this.workers.length);
     return this.workers.length;
   }
 
