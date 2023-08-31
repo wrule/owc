@@ -7,9 +7,12 @@ interface Best {
 
 export
 class WorkerHub {
-  public constructor(private scriptURL: string) {
-
-  }
+  public constructor(
+    private scriptURL: string,
+    private emitBest: (best: Best) => void,
+    private emitIterations: (iterations: number) => void,
+    private emitWorkers: (workers: number) => void,
+  ) { }
 
   private workers: Worker[] = [];
   private iterations = 0;
@@ -23,6 +26,7 @@ class WorkerHub {
       if (type === 'iterations') this.iterations += data ?? 0;
       if (type === 'best' && data?.value > this.best.value) {
         this.best = data;
+        this.emitBest(this.best);
       }
     };
     return worker;
@@ -33,10 +37,15 @@ class WorkerHub {
     if (diff > 0)
       this.workers.push(...Array(diff).fill(0).map(() => this.createWorker()));
     if (diff < 0) {
-      diff = -diff;
-      while (diff > 0 && this.workers.length > 1)
+      let abs = -diff;
+      while (abs-- > 0 && this.workers.length > 1)
         this.workers.pop()?.terminate();
     }
+    if (diff !== 0) this.emitWorkers(diff);
     return this.workers.length;
+  }
+
+  public UpdateBest(best: Best) {
+    if (best.value > this.best.value) this.best = best;
   }
 }
