@@ -12,7 +12,12 @@ class WorkerHub {
     private emitBest: (best: Best) => void,
     private emitIterations: (iterations: number) => void,
     private emitWorkers: (workers: number) => void,
-  ) { }
+  ) {
+    setInterval(() => {
+      this.emitIterations(this.iterations);
+      this.iterations = 0;
+    }, 5000);
+  }
 
   private workers: Worker[] = [];
   private iterations = 0;
