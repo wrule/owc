@@ -14,9 +14,10 @@ class WorkerHub {
     private emitWorkers: (change: number, workers: number) => void,
     private interval = 5000,
   ) {
+    let prevIterations = this.iterations;
     setInterval(() => {
-      this.emitIterations(this.iterations, this);
-      this.iterations = 0;
+      this.emitIterations(this.iterations - prevIterations, this.iterations);
+      prevIterations = this.iterations;
     }, interval);
   }
 
