@@ -48,7 +48,7 @@ class WorkerHub {
       this.workers.push(...Array(diff).fill(0).map(() => this.createWorker()));
     if (diff < 0) {
       let abs = -diff;
-      while (abs-- > 0 && this.workers.length > 1)
+      while (abs-- > 0 && this.workers.length > 0)
         this.workers.pop()?.terminate();
     }
     this.emitWorkers(diff, this.workers.length);

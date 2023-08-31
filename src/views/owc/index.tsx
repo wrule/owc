@@ -36,6 +36,7 @@ function OWC() {
         console.log,
         console.log,
         (change: number, workers: number) => {
+          console.log(change, workers);
           setWorkers(workers);
         },
       );
