@@ -32,4 +32,5 @@ output/
 *.zip
 *.tar.gz
 www/
+build/
 dist/

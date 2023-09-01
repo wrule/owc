@@ -3,7 +3,7 @@ import path from 'path';
 import Express from 'express';
 import SocketIO from 'socket.io';
 
-const webPath = 'www';
+const webPath = 'build';
 
 interface Best {
   value: number;
