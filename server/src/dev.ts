@@ -20,7 +20,7 @@ function socketServer(server: http.Server) {
     io.emit('iterations', iterations);
     io.emit('optimizers', optimizers);
     client.on('best', (newBest: Best) => {
-      if (newBest.value > best.value) {
+      if (newBest.value >= best.value) {
         best = newBest;
         io.emit('best', best);
       }
