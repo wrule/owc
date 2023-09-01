@@ -41,6 +41,7 @@ function socketServer(server: http.Server) {
       optimizers += change;
       io.emit('optimizers', optimizers);
     });
+    client.on('command', (command) => io.emit('command', command));
   });
   return io;
 }
