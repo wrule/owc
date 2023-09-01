@@ -45,6 +45,10 @@ function socketServer(server: http.Server) {
       io.emit('optimizers', optimizers);
     });
     client.on('command', (command) => io.emit('command', command));
+    client.on('disconnect', () => {
+      optimizers -= workers;
+      io.emit('optimizers', optimizers);
+    });
   });
   return io;
 }
