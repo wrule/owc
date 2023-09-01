@@ -4,7 +4,7 @@ import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
 import { Best, WorkerHub } from './workerHub';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 async function fetchObjectURL(url: string) {
   let objectURL = localStorage.getItem(url);
@@ -25,6 +25,7 @@ async function fetchObjectURL(url: string) {
 
 export
 function OWC() {
+  const ioRef = useRef<Socket>();
   const hubRef = useRef<WorkerHub | null>();
   const [workers, setWorkers] = useState<number>(0);
   const [qrcode, setQRCode] = useState<boolean>(false);
@@ -34,21 +35,29 @@ function OWC() {
   const [startTime, setStartTime] = useState(0);
   const [nowTime, setNowTime] = useState(0);
 
-  const runWorkerHub = async () => {
-    if (hubRef.current === undefined) {
-      hubRef.current = null;
-      hubRef.current = new WorkerHub(
-        await fetchObjectURL('/script.js'),
-        (best) => setBest(best),
-        (change, iterations) => setIterations(iterations),
-        (change: number, workers: number) => {
-          console.log(change, workers);
-          setWorkers(workers);
-        },
-      );
-      setStartTime(Date.now());
-      setInterval(() => setNowTime(Date.now()), 1000);
+  const connectServer = () => {
+    if (!ioRef.current) {
+      ioRef.current = io();
+      ioRef.current.on('connect', () => {
+        console.log('connected');
+        runWorkerHub(ioRef.current as Socket);
+      });
+      ioRef.current.on('best', (newBest: Best) => setBest(newBest));
+      ioRef.current.on('iterations', (iterations: number) => setIterations(iterations));
+      ioRef.current.on('optimizers', (optimizers: number) => setOptimizers(optimizers));
+      ioRef.current.on('disconnect', () => console.log('disconnected'));
     }
+  };
+
+  const runWorkerHub = async (io: Socket) => {
+    hubRef.current = new WorkerHub(
+      await fetchObjectURL('/script.js'),
+      (best) => io.emit('best', best),
+      (change) => io.emit('iterations', change),
+      (change) => io.emit('optimizers', change),
+    );
+    setStartTime(Date.now());
+    setInterval(() => setNowTime(Date.now()), 1000);
   };
 
   const timeCost = useMemo(() => {
@@ -62,19 +71,7 @@ function OWC() {
   }, [nowTime, startTime]);
 
   useEffect(() => {
-    runWorkerHub();
-  }, []);
-
-  useEffect(() => {
-    const client = io();
-    client.on('connect', () => console.log('connect'));
-    client.on('best', (newBest: Best) => {
-      if (newBest.value > best.value) setBest(newBest);
-    });
-    client.on('iterations', (iterations: number) => setIterations(iterations));
-    client.on('optimizers', (workers: number) => setOptimizers(workers));
-    client.on('disconnect', () => console.log('disconnect'));
-    return () => { client.disconnect(); }
+    connectServer();
   }, []);
 
   return <div className={style.com}>
