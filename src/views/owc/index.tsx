@@ -29,7 +29,8 @@ function OWC() {
   const [qrcode, setQRCode] = useState<boolean>(false);
   const [best, setBest] = useState<number>(0);
   const [iterations, setIterations] = useState<number>(0);
-  const [timeSpan, setTimeSpan] = useState<[number, number]>([0, 0]);
+  const [startTime, setStartTime] = useState(0);
+  const [nowTime, setNowTime] = useState(0);
 
   const runWorkerHub = async () => {
     if (hubRef.current === undefined) {
@@ -43,19 +44,20 @@ function OWC() {
           setWorkers(workers);
         },
       );
-      setTimeSpan([Date.now(), Date.now()]);
-      setInterval(() => setTimeSpan([timeSpan[0], Date.now()]), 1000);
+      setStartTime(Date.now());
+      setInterval(() => setNowTime(Date.now()), 1000);
     }
   };
 
   const timeCost = useMemo(() => {
-    let seconds = Math.floor((timeSpan[1] - timeSpan[0]) / 1000);
+    if (!nowTime || !startTime) return '00:00:00';
+    const seconds = Math.floor((nowTime - startTime) / 1000);
     let result = '';
-    result = ':' + (Math.floor(seconds) % 60).toString().padStart(2, '0') + result;
+    result = ':' + (seconds % 60).toString().padStart(2, '0');
     result = ':' + (Math.floor(seconds / 60) % 60).toString().padStart(2, '0') + result;
-    result = (Math.floor(seconds / 3600) % 60).toString().padStart(2, '0') + result;
+    result = Math.floor(seconds / 3600).toString().padStart(2, '0') + result;
     return result;
-  }, [timeSpan]);
+  }, [nowTime, startTime]);
 
   useEffect(() => {
     runWorkerHub();
