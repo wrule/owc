@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.js
 
@@ -24,3 +24,10 @@ yarn-error.log*
 
 public/data.json
 public/script.js
+
+output/
+.DS_Store
+.secret*.json
+*.csv
+*.zip
+*.tar.gz
