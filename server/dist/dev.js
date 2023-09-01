@@ -11,7 +11,7 @@ const webPath = 'www';
 function socketServer(server) {
     let best = { value: -Infinity, params: undefined };
     let iterations = 0;
-    let workers = 0;
+    let optimizers = 0;
     const io = new socket_io_1.default.Server(server);
     io.on('connection', (client) => {
         client.on('best', (newBest) => {
@@ -24,9 +24,9 @@ function socketServer(server) {
             iterations += change;
             io.emit('iterations', iterations);
         });
-        client.on('workers', (change) => {
-            workers += change;
-            io.emit('workers', workers);
+        client.on('optimizers', (change) => {
+            optimizers += change;
+            io.emit('optimizers', optimizers);
         });
     });
     return io;

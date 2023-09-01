@@ -13,7 +13,7 @@ interface Best {
 function socketServer(server: http.Server) {
   let best: Best = { value: -Infinity, params: undefined };
   let iterations = 0;
-  let workers = 0;
+  let optimizers = 0;
   const io = new SocketIO.Server(server);
   io.on('connection', (client) => {
     client.on('best', (newBest: Best) => {
@@ -26,9 +26,9 @@ function socketServer(server: http.Server) {
       iterations += change;
       io.emit('iterations', iterations);
     });
-    client.on('workers', (change: number) => {
-      workers += change;
-      io.emit('workers', workers);
+    client.on('optimizers', (change: number) => {
+      optimizers += change;
+      io.emit('optimizers', optimizers);
     });
   });
   return io;

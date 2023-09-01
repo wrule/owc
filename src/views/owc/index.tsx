@@ -72,7 +72,7 @@ function OWC() {
       if (newBest.value > best.value) setBest(newBest);
     });
     client.on('iterations', (iterations: number) => setIterations(iterations));
-    client.on('workers', (workers: number) => setWorkers(workers));
+    client.on('optimizers', (workers: number) => setOptimizers(workers));
     client.on('disconnect', () => console.log('disconnect'));
     return () => { client.disconnect(); }
   }, []);
