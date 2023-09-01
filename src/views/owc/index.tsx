@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
-import { WorkerHub } from './workerHub';
+import { Best, WorkerHub } from './workerHub';
 
 async function fetchObjectURL(url: string) {
   let objectURL = localStorage.getItem(url);
@@ -27,7 +27,7 @@ function OWC() {
   const hubRef = useRef<WorkerHub | null>();
   const [workers, setWorkers] = useState<number>(0);
   const [qrcode, setQRCode] = useState<boolean>(false);
-  const [best, setBest] = useState<number>(0);
+  const [best, setBest] = useState<Best>({ value: 0, params: { } });
   const [iterations, setIterations] = useState<number>(0);
   const [optimizers, setOptimizers] = useState<number>(0);
   const [startTime, setStartTime] = useState(0);
@@ -38,7 +38,7 @@ function OWC() {
       hubRef.current = null;
       hubRef.current = new WorkerHub(
         await fetchObjectURL('/script.js'),
-        (best) => setBest(best.value),
+        (best) => setBest(best),
         (change, iterations) => setIterations(iterations),
         (change: number, workers: number) => {
           console.log(change, workers);
@@ -95,8 +95,8 @@ function OWC() {
         <Card>
           <Statistic
             title="Best"
-            value={best}
-            valueStyle={{ fontWeight: 'bolder' }}
+            value={best.value}
+            valueStyle={{ fontWeight: 'bolder', cursor: 'pointer' }}
           />
         </Card>
       </Col>
