@@ -4,8 +4,6 @@ import Express from 'express';
 import SocketIO from 'socket.io';
 import * as args from '@wrule/args';
 
-const webPath = 'build';
-
 interface Best {
   value: number;
   params: any;
@@ -48,12 +46,14 @@ function socketServer(server: http.Server) {
 }
 
 function main() {
+  const params = { path: 'build', port: 9999 };
+  fillParams(params);
   const app = Express();
   const server = http.createServer(app);
   socketServer(server);
-  app.use(Express.static(path.resolve(webPath)));
-  app.get('*', (req, res) => res.sendFile(path.resolve(webPath, 'index.html')));
-  server.listen(9999);
+  app.use(Express.static(path.resolve(params.path)));
+  app.get('*', (req, res) => res.sendFile(path.resolve(params.path, 'index.html')));
+  server.listen(params.port);
 }
 
 main();
