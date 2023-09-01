@@ -55,7 +55,7 @@ function OWC() {
       (best) => io.emit('best', best),
       (change) => io.emit('iterations', change),
       (change, workers) => {
-        io.emit('optimizers', change);
+        io.emit('optimizers', change, workers);
         setWorkers(workers);
       },
     );
