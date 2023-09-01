@@ -29,6 +29,7 @@ function OWC() {
   const [qrcode, setQRCode] = useState<boolean>(false);
   const [best, setBest] = useState<number>(0);
   const [iterations, setIterations] = useState<number>(0);
+  const [optimizers, setOptimizers] = useState<number>(0);
   const [startTime, setStartTime] = useState(0);
   const [nowTime, setNowTime] = useState(0);
 
@@ -113,7 +114,7 @@ function OWC() {
         <Card>
           <Statistic
             title="Optimizers"
-            value={5}
+            value={optimizers}
           />
         </Card>
       </Col>
