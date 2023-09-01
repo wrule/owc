@@ -4,6 +4,7 @@ import progress from './progress.gif';
 import style from './index.module.scss';
 import axios from 'axios';
 import { Best, WorkerHub } from './workerHub';
+import { io } from 'socket.io-client';
 
 async function fetchObjectURL(url: string) {
   let objectURL = localStorage.getItem(url);
@@ -62,6 +63,18 @@ function OWC() {
 
   useEffect(() => {
     runWorkerHub();
+  }, []);
+
+  useEffect(() => {
+    const client = io();
+    client.on('connect', () => console.log('connect'));
+    client.on('best', (newBest: Best) => {
+      if (newBest.value > best.value) setBest(newBest);
+    });
+    client.on('iterations', (iterations: number) => setIterations(iterations));
+    client.on('workers', (workers: number) => setWorkers(workers));
+    client.on('disconnect', () => console.log('disconnect'));
+    return () => { client.disconnect(); }
   }, []);
 
   return <div className={style.com}>
