@@ -1,7 +1,7 @@
 import http from 'http';
-import express from 'express';
-import SocketIO from 'socket.io';
 import path from 'path';
+import Express from 'express';
+import SocketIO from 'socket.io';
 
 const webPath = 'www';
 
@@ -38,10 +38,10 @@ function socketServer(server: http.Server) {
 }
 
 function main() {
-  const app = express();
+  const app = Express();
   const server = http.createServer(app);
   socketServer(server);
-  app.use(express.static(path.resolve(webPath)));
+  app.use(Express.static(path.resolve(webPath)));
   app.get('*', (req, res) => res.sendFile(path.resolve(webPath, 'index.html')));
   server.listen(9999);
 }
