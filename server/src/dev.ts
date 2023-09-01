@@ -16,6 +16,9 @@ function socketServer(server: http.Server) {
   let optimizers = 0;
   const io = new SocketIO.Server(server);
   io.on('connection', (client) => {
+    io.emit('best', best);
+    io.emit('iterations', iterations);
+    io.emit('optimizers', optimizers);
     client.on('best', (newBest: Best) => {
       if (newBest.value > best.value) {
         best = newBest;
