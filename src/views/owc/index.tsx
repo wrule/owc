@@ -26,7 +26,7 @@ async function fetchObjectURL(url: string) {
 export
 function OWC() {
   const ioRef = useRef<Socket>();
-  const hubRef = useRef<WorkerHub | null>();
+  const hubRef = useRef<WorkerHub>();
   const [workers, setWorkers] = useState<number>(0);
   const [qrcode, setQRCode] = useState<boolean>(false);
   const [best, setBest] = useState<Best>({ value: 0, params: { } });
@@ -54,7 +54,10 @@ function OWC() {
       await fetchObjectURL('/script.js'),
       (best) => io.emit('best', best),
       (change) => io.emit('iterations', change),
-      (change) => io.emit('optimizers', change),
+      (change, workers) => {
+        io.emit('optimizers', change);
+        setWorkers(workers);
+      },
     );
     setStartTime(Date.now());
     setInterval(() => setNowTime(Date.now()), 1000);
@@ -87,7 +90,7 @@ function OWC() {
           value={workers}
           onChange={(value) => {
             if (value != null && hubRef.current)
-              setWorkers(hubRef.current.ChangeWorkers(Math.floor(value)));
+              hubRef.current.ChangeWorkers(Math.floor(value));
           }}
         />
       </Space>
