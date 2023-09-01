@@ -25,6 +25,7 @@ function socketServer(server: http.Server) {
   let optimizers = 0;
   const io = new SocketIO.Server(server);
   io.on('connection', (client) => {
+    let workers = 0;
     io.emit('best', best);
     io.emit('iterations', iterations);
     io.emit('optimizers', optimizers);
@@ -38,7 +39,8 @@ function socketServer(server: http.Server) {
       iterations += change;
       io.emit('iterations', iterations);
     });
-    client.on('optimizers', (change: number) => {
+    client.on('optimizers', (change: number, newWorkers: number) => {
+      workers = newWorkers;
       optimizers += change;
       io.emit('optimizers', optimizers);
     });
